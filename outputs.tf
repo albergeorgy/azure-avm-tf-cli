@@ -32,3 +32,8 @@ output "nsg_id" {
   description = "ID of the Network Security Group"
   value       = module.nsg.resource_id
 }
+
+output "log_analytics_workspace_id" {
+  description = "ID of the Log Analytics workspace"
+  value       = module.log_analytics.resource_id
+}

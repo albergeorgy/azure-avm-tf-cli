@@ -9,6 +9,10 @@ terraform {
       source  = "hashicorp/azurerm"
       version = ">= 4.0.0"
     }
+    azapi = {
+      source  = "Azure/azapi"
+      version = ">= 2.0.0"
+    }
   }
 
   backend "azurerm" {
@@ -16,6 +20,8 @@ terraform {
     storage_account_name = "stterraformstatenqoxgc"
     container_name       = "tfstate"
     key                  = "azure-avm.tfstate"
+    use_oidc             = true
+    use_azuread_auth     = true
   }
 }
 
@@ -27,7 +33,7 @@ provider "azurerm" {
 # --- Resource Group (AVM) ---
 module "resource_group" {
   source  = "Azure/avm-res-resources-resourcegroup/azurerm"
-  version = "~> 0.2"
+  version = "~> 0.4"
 
   name     = "rg-${var.project_name}-${var.environment}"
   location = var.location
@@ -40,9 +46,9 @@ module "virtual_network" {
   source  = "Azure/avm-res-network-virtualnetwork/azurerm"
   version = "~> 0.7"
 
-  name                = "vnet-${var.project_name}-${var.environment}"
-  resource_group_name = module.resource_group.name
-  location            = var.location
+  name      = "vnet-${var.project_name}-${var.environment}"
+  parent_id = module.resource_group.resource_id
+  location  = var.location
 
   address_space = var.vnet_address_space
 
@@ -58,8 +64,6 @@ module "virtual_network" {
   }
 
   tags = local.common_tags
-
-  depends_on = [module.resource_group]
 }
 
 # --- Key Vault (AVM) ---
@@ -108,6 +112,22 @@ module "nsg" {
       destination_address_prefix = "*"
     }
   }
+
+  tags = local.common_tags
+
+  depends_on = [module.resource_group]
+}
+
+# --- Log Analytics Workspace (AVM) ---
+module "log_analytics" {
+  source  = "Azure/avm-res-operationalinsights-workspace/azurerm"
+  version = "~> 0.4"
+
+  name                = "log-${var.project_name}-${var.environment}"
+  resource_group_name = module.resource_group.name
+  location            = var.location
+
+  log_analytics_workspace_retention_in_days = var.environment == "prod" ? 90 : 30
 
   tags = local.common_tags
 
