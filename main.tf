@@ -16,6 +16,7 @@ terraform {
     storage_account_name = "stterraformstatenqoxgc"
     container_name       = "tfstate"
     key                  = "azure-avm.tfstate"
+    use_oidc             = true
   }
 }
 
