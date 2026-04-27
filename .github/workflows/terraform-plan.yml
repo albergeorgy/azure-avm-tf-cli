@@ -61,21 +61,29 @@ jobs:
             -no-color
         continue-on-error: true
 
+      - name: Save Plan Output
+        if: github.event_name == 'pull_request'
+        run: |
+          echo '${{ steps.plan.outputs.stdout }}' > plan_output.txt 2>/dev/null || true
+
       - name: Comment Plan on PR
         uses: actions/github-script@v7
         if: github.event_name == 'pull_request'
         with:
           script: |
-            const output = `#### 🏗 Terraform Plan - \`${{ matrix.environment }}\`
-            \`\`\`
-            ${{ steps.plan.outputs.stdout }}
-            \`\`\`
-            *Triggered by @${{ github.actor }} on \`${{ github.event.pull_request.head.ref }}\`*`;
+            const fs = require('fs');
+            let planOutput = 'No plan output available';
+            try {
+              planOutput = fs.readFileSync('plan_output.txt', 'utf8').trim();
+            } catch (e) {
+              planOutput = 'Plan output could not be read.';
+            }
+            const body = `#### 🏗 Terraform Plan - \`${{ matrix.environment }}\`\n\`\`\`\n${planOutput}\n\`\`\`\n*Triggered by @${{ github.actor }} on \`${{ github.event.pull_request.head.ref }}\`*`;
             github.rest.issues.createComment({
               issue_number: context.issue.number,
               owner: context.repo.owner,
               repo: context.repo.repo,
-              body: output.substring(0, 65536)
+              body: body.substring(0, 65536)
             });
 
       - name: Plan Status
