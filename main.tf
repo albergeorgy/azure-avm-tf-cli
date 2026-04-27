@@ -113,3 +113,19 @@ module "nsg" {
 
   depends_on = [module.resource_group]
 }
+
+# --- Log Analytics Workspace (AVM) ---
+module "log_analytics" {
+  source  = "Azure/avm-res-operationalinsights-workspace/azurerm"
+  version = "~> 0.4"
+
+  name                = "log-${var.project_name}-${var.environment}"
+  resource_group_name = module.resource_group.name
+  location            = var.location
+
+  retention_in_days = var.environment == "prod" ? 90 : 30
+
+  tags = local.common_tags
+
+  depends_on = [module.resource_group]
+}
