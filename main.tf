@@ -9,6 +9,10 @@ terraform {
       source  = "hashicorp/azurerm"
       version = ">= 4.0.0"
     }
+    azapi = {
+      source  = "Azure/azapi"
+      version = ">= 2.0.0"
+    }
   }
 
   backend "azurerm" {
@@ -29,7 +33,7 @@ provider "azurerm" {
 # --- Resource Group (AVM) ---
 module "resource_group" {
   source  = "Azure/avm-res-resources-resourcegroup/azurerm"
-  version = "~> 0.2"
+  version = "~> 0.4"
 
   name     = "rg-${var.project_name}-${var.environment}"
   location = var.location
@@ -42,9 +46,9 @@ module "virtual_network" {
   source  = "Azure/avm-res-network-virtualnetwork/azurerm"
   version = "~> 0.7"
 
-  name                = "vnet-${var.project_name}-${var.environment}"
-  resource_group_name = module.resource_group.name
-  location            = var.location
+  name      = "vnet-${var.project_name}-${var.environment}"
+  parent_id = module.resource_group.resource_id
+  location  = var.location
 
   address_space = var.vnet_address_space
 
@@ -60,8 +64,6 @@ module "virtual_network" {
   }
 
   tags = local.common_tags
-
-  depends_on = [module.resource_group]
 }
 
 # --- Key Vault (AVM) ---
@@ -125,7 +127,7 @@ module "log_analytics" {
   resource_group_name = module.resource_group.name
   location            = var.location
 
-  retention_in_days = var.environment == "prod" ? 90 : 30
+  log_analytics_workspace_retention_in_days = var.environment == "prod" ? 90 : 30
 
   tags = local.common_tags
 
