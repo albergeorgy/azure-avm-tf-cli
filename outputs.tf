@@ -50,10 +50,10 @@ output "windows_vm_private_ip" {
 
 output "application_gateway_name" {
   description = "Name of the Application Gateway"
-  value       = module.application_gateway.name
+  value       = module.application_gateway.application_gateway_name
 }
 
 output "application_gateway_public_ip" {
   description = "Public IP address of the Application Gateway"
-  value       = module.application_gateway.public_ip_address
+  value       = module.application_gateway.new_public_ip_address
 }
