@@ -48,15 +48,3 @@ variable "subnet_pe_prefix" {
   type        = string
   default     = "10.0.2.0/24"
 }
-
-variable "vm_admin_password" {
-  description = "Admin password for the Windows VM"
-  type        = string
-  sensitive   = true
-}
-
-variable "subnet_appgw_prefix" {
-  description = "Address prefix for the Application Gateway subnet"
-  type        = string
-  default     = "10.0.3.0/24"
-}
