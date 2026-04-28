@@ -37,3 +37,13 @@ output "log_analytics_workspace_id" {
   description = "ID of the Log Analytics workspace"
   value       = module.log_analytics.resource_id
 }
+
+output "vm_name" {
+  description = "Name of the Windows VM"
+  value       = module.vm_win.name
+}
+
+output "vm_private_ip" {
+  description = "Private IP of the Windows VM"
+  value       = module.vm_win.network_interfaces.primary.ip_configurations.primary.private_ip_address
+}
