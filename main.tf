@@ -207,6 +207,11 @@ module "application_gateway" {
     subnet_id = module.virtual_network.subnets["appgw"].resource_id
   }
 
+  public_ip_address_configuration = {
+    create_public_ip_enabled = true
+    public_ip_name           = "pip-agw-${var.project_name}-${var.environment}"
+  }
+
   frontend_ports = {
     port80 = {
       name = "port-80"
