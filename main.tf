@@ -146,6 +146,8 @@ module "windows_vm" {
   sku_size            = "Standard_D2ds_v5"
   zone                = null
 
+  encryption_at_host_enabled = false
+
   source_image_reference = {
     publisher = "MicrosoftWindowsServer"
     offer     = "WindowsServer"
