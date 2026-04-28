@@ -133,3 +133,50 @@ module "log_analytics" {
 
   depends_on = [module.resource_group]
 }
+
+# --- Windows Virtual Machine (AVM) ---
+module "windows_vm" {
+  source  = "Azure/avm-res-compute-virtualmachine/azurerm"
+  version = "~> 0.18"
+
+  name                = "amv-test"
+  resource_group_name = module.resource_group.name
+  location            = var.location
+  os_type             = "Windows"
+  sku_size            = "Standard_D2ds_v5"
+  zone                = null
+
+  source_image_reference = {
+    publisher = "MicrosoftWindowsServer"
+    offer     = "WindowsServer"
+    sku       = "2022-datacenter-g2"
+    version   = "latest"
+  }
+
+  account_credentials = {
+    admin_username = "azureadmin"
+    admin_password = var.vm_admin_password
+  }
+
+  network_interfaces = {
+    nic0 = {
+      name = "nic-amv-test"
+      ip_configurations = {
+        ipconfig1 = {
+          name                          = "ipconfig1"
+          private_ip_subnet_resource_id = module.virtual_network.subnets["default"].resource_id
+        }
+      }
+    }
+  }
+
+  os_disk = {
+    caching              = "ReadWrite"
+    storage_account_type = "Premium_LRS"
+    disk_size_gb         = 128
+  }
+
+  tags = local.common_tags
+
+  depends_on = [module.resource_group, module.virtual_network]
+}
