@@ -45,5 +45,5 @@ output "vm_name" {
 
 output "vm_private_ip" {
   description = "Private IP of the Windows VM"
-  value       = module.vm_win.network_interfaces.primary.ip_configurations.primary.private_ip_address
+  value       = module.vm_win.virtual_machine.private_ip_address
 }
