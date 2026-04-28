@@ -54,3 +54,9 @@ variable "vm_admin_password" {
   type        = string
   sensitive   = true
 }
+
+variable "subnet_appgw_prefix" {
+  description = "Address prefix for the Application Gateway subnet"
+  type        = string
+  default     = "10.0.3.0/24"
+}

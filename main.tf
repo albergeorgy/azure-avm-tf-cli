@@ -61,6 +61,10 @@ module "virtual_network" {
       name             = "snet-private-endpoints"
       address_prefixes = [var.subnet_pe_prefix]
     }
+    appgw = {
+      name             = "snet-appgw"
+      address_prefixes = [var.subnet_appgw_prefix]
+    }
   }
 
   tags = local.common_tags
@@ -176,6 +180,75 @@ module "windows_vm" {
     caching              = "ReadWrite"
     storage_account_type = "Premium_LRS"
     disk_size_gb         = 128
+  }
+
+  tags = local.common_tags
+
+  depends_on = [module.resource_group, module.virtual_network]
+}
+
+# --- Application Gateway (AVM) ---
+module "application_gateway" {
+  source  = "Azure/avm-res-network-applicationgateway/azurerm"
+  version = "~> 0.5"
+
+  name                = "agw-${var.project_name}-${var.environment}"
+  resource_group_name = module.resource_group.name
+  location            = var.location
+
+  sku = {
+    name     = "Standard_v2"
+    tier     = "Standard_v2"
+    capacity = 2
+  }
+
+  gateway_ip_configuration = {
+    name      = "agw-ip-config"
+    subnet_id = module.virtual_network.subnets["appgw"].resource_id
+  }
+
+  frontend_ports = {
+    port80 = {
+      name = "port-80"
+      port = 80
+    }
+  }
+
+  backend_address_pools = {
+    default = {
+      name         = "default-backend-pool"
+      ip_addresses = []
+    }
+  }
+
+  backend_http_settings = {
+    default = {
+      name                  = "default-http-settings"
+      port                  = 80
+      protocol              = "Http"
+      cookie_based_affinity = "Disabled"
+      request_timeout       = 30
+    }
+  }
+
+  http_listeners = {
+    default = {
+      name                           = "default-listener"
+      frontend_ip_configuration_name = "agw-${var.project_name}-${var.environment}-public"
+      frontend_port_name             = "port-80"
+      protocol                       = "Http"
+    }
+  }
+
+  request_routing_rules = {
+    default = {
+      name                       = "default-routing-rule"
+      priority                   = 100
+      rule_type                  = "Basic"
+      http_listener_name         = "default-listener"
+      backend_address_pool_name  = "default-backend-pool"
+      backend_http_settings_name = "default-http-settings"
+    }
   }
 
   tags = local.common_tags

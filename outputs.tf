@@ -47,3 +47,13 @@ output "windows_vm_private_ip" {
   description = "Private IP address of the Windows VM"
   value       = module.windows_vm.network_interfaces.nic0.private_ip_addresses[0]
 }
+
+output "application_gateway_name" {
+  description = "Name of the Application Gateway"
+  value       = module.application_gateway.name
+}
+
+output "application_gateway_public_ip" {
+  description = "Public IP address of the Application Gateway"
+  value       = module.application_gateway.public_ip_address
+}
