@@ -212,6 +212,8 @@ module "application_gateway" {
     public_ip_name           = "pip-agw-${var.project_name}-${var.environment}"
   }
 
+  frontend_ip_configuration_public_name = "appgw-frontend-public"
+
   frontend_ports = {
     port80 = {
       name = "port-80"
@@ -239,7 +241,7 @@ module "application_gateway" {
   http_listeners = {
     default = {
       name                           = "default-listener"
-      frontend_ip_configuration_name = "agw-${var.project_name}-${var.environment}-public"
+      frontend_ip_configuration_name = "appgw-frontend-public"
       frontend_port_name             = "port-80"
       protocol                       = "Http"
     }
