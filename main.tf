@@ -2,7 +2,7 @@
 # This project deploys Azure resources using official Azure Verified Modules
 
 terraform {
-  required_version = ">= 1.9.0"
+  required_version = ">= 1.10.0"
 
   required_providers {
     azurerm = {
