@@ -32,7 +32,6 @@ jobs:
       ARM_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
       ARM_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
       ARM_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
-      ARM_USE_OIDC: true
       TARGET_ENV: ${{ github.event.inputs.environment || 'dev' }}
 
     steps:
@@ -51,10 +50,25 @@ jobs:
           tenant-id: ${{ secrets.AZURE_TENANT_ID }}
           subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
 
+      - name: Get Azure Access Token
+        id: az_token
+        run: |
+          TOKEN=$(az account get-access-token --resource=https://management.azure.com --query accessToken -o tsv)
+          echo "::add-mask::$TOKEN"
+          echo "token=$TOKEN" >> $GITHUB_OUTPUT
+          # Also get storage token for backend
+          STORAGE_TOKEN=$(az account get-access-token --resource=https://storage.azure.com --query accessToken -o tsv)
+          echo "::add-mask::$STORAGE_TOKEN"
+          echo "storage_token=$STORAGE_TOKEN" >> $GITHUB_OUTPUT
+
       - name: Terraform Init
+        env:
+          ARM_ACCESS_TOKEN: ${{ steps.az_token.outputs.token }}
         run: terraform init -backend-config="key=${{ env.TARGET_ENV }}.tfstate"
 
       - name: Terraform Plan
+        env:
+          ARM_ACCESS_TOKEN: ${{ steps.az_token.outputs.token }}
         run: |
           terraform plan \
             -var-file="environments/${{ env.TARGET_ENV }}/terraform.tfvars" \
@@ -64,4 +78,6 @@ jobs:
             -out="tfplan"
 
       - name: Terraform Apply
+        env:
+          ARM_ACCESS_TOKEN: ${{ steps.az_token.outputs.token }}
         run: terraform apply -auto-approve "tfplan"
