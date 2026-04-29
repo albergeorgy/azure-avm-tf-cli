@@ -227,6 +227,7 @@ module "vm_win_2" {
 
   admin_username = "azureadmin"
   admin_password = var.vm_admin_password
+  computer_name  = "vmavmtfdev2"
 
   os_disk = {
     caching              = "ReadWrite"
