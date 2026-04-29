@@ -47,3 +47,13 @@ output "vm_private_ip" {
   description = "Private IP of the Windows VM"
   value       = module.vm_win.virtual_machine.private_ip_address
 }
+
+output "vm_2_name" {
+  description = "Name of the second Windows VM"
+  value       = module.vm_win_2.name
+}
+
+output "vm_2_private_ip" {
+  description = "Private IP of the second Windows VM"
+  value       = module.vm_win_2.virtual_machine.private_ip_address
+}
