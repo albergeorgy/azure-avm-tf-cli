@@ -20,6 +20,7 @@ terraform {
     storage_account_name = "sttfstategw18ef"
     container_name       = "tfstate"
     key                  = "azure-avm.tfstate"
+    use_oidc             = true
     use_azuread_auth     = true
   }
 }
