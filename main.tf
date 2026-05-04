@@ -224,6 +224,7 @@ module "application_gateway" {
 
   public_ip_address_configuration = {
     public_ip_name = "pip-agw-${var.project_name}-${var.environment}-cae"
+    zones          = [] # Canada East does not support Availability Zones
   }
 
   frontend_ports = {
@@ -272,6 +273,8 @@ module "application_gateway" {
     tier     = "Standard_v2"
     capacity = 1
   }
+
+  zones = [] # Canada East does not support Availability Zones
 
   tags = local.common_tags
 
