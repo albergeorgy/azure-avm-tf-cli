@@ -76,8 +76,8 @@ module "key_vault" {
   location            = var.location
   tenant_id           = var.tenant_id
 
-  sku_name                  = "standard"
-  purge_protection_enabled  = var.environment == "prod" ? true : false
+  sku_name                   = "standard"
+  purge_protection_enabled   = var.environment == "prod" ? true : false
   soft_delete_retention_days = 7
 
   network_acls = {
@@ -162,7 +162,7 @@ module "vm_win" {
   source  = "Azure/avm-res-compute-virtualmachine/azurerm"
   version = "~> 0.18"
 
-  name                = "vm-${var.project_name}-${var.environment}"
+  name                = var.vm_name
   resource_group_name = module.resource_group.name
   location            = "canadaeast"
   os_type             = "Windows"
@@ -189,7 +189,7 @@ module "vm_win" {
 
   network_interfaces = {
     primary = {
-      name = "nic-vm-${var.project_name}-${var.environment}"
+      name = "nic-${var.vm_name}-${var.environment}"
       ip_configurations = {
         primary = {
           name                          = "ipconfig1"
