@@ -54,3 +54,9 @@ variable "vm_admin_password" {
   type        = string
   sensitive   = true
 }
+
+variable "vm_name" {
+  description = "Name for the Windows VM resource"
+  type        = string
+  default     = "test0001"
+}
