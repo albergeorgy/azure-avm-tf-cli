@@ -48,4 +48,18 @@ output "vm_private_ip" {
   value       = module.vm_win.virtual_machine.private_ip_address
 }
 
+output "application_gateway_id" {
+  description = "ID of the Application Gateway"
+  value       = module.application_gateway.resource_id
+}
+
+output "application_gateway_name" {
+  description = "Name of the Application Gateway"
+  value       = module.application_gateway.application_gateway_name
+}
+
+output "application_gateway_public_ip" {
+  description = "Public IP address of the Application Gateway"
+  value       = module.application_gateway.new_public_ip_address
+}
 

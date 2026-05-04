@@ -150,6 +150,10 @@ module "vnet_canadaeast" {
       name             = "snet-vm"
       address_prefixes = ["10.0.16.0/24"]
     }
+    agw = {
+      name             = "snet-agw"
+      address_prefixes = ["10.0.17.0/24"]
+    }
   }
 
   tags = local.common_tags
@@ -197,6 +201,76 @@ module "vm_win" {
         }
       }
     }
+  }
+
+  tags = local.common_tags
+
+  depends_on = [module.resource_group, module.vnet_canadaeast]
+}
+
+# --- Application Gateway (AVM) - Canada East ---
+module "application_gateway" {
+  source  = "Azure/avm-res-network-applicationgateway/azurerm"
+  version = "~> 0.5"
+
+  name                = "agw-${var.project_name}-${var.environment}-cae"
+  resource_group_name = module.resource_group.name
+  location            = "canadaeast"
+
+  gateway_ip_configuration = {
+    name      = "gwipconfig"
+    subnet_id = module.vnet_canadaeast.subnets["agw"].resource_id
+  }
+
+  public_ip_address_configuration = {
+    public_ip_name = "pip-agw-${var.project_name}-${var.environment}-cae"
+  }
+
+  frontend_ports = {
+    http = {
+      name = "feport-http"
+      port = 80
+    }
+  }
+
+  backend_address_pools = {
+    default = {
+      name = "bepool-default"
+    }
+  }
+
+  backend_http_settings = {
+    default = {
+      name                  = "behttpsetting-default"
+      port                  = 80
+      protocol              = "Http"
+      cookie_based_affinity = "Disabled"
+      request_timeout       = 30
+    }
+  }
+
+  http_listeners = {
+    http = {
+      name               = "listener-http"
+      frontend_port_name = "feport-http"
+    }
+  }
+
+  request_routing_rules = {
+    default = {
+      name                       = "rule-default"
+      rule_type                  = "Basic"
+      http_listener_name         = "listener-http"
+      backend_address_pool_name  = "bepool-default"
+      backend_http_settings_name = "behttpsetting-default"
+      priority                   = 100
+    }
+  }
+
+  sku = {
+    name     = "Standard_v2"
+    tier     = "Standard_v2"
+    capacity = 1
   }
 
   tags = local.common_tags
