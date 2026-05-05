@@ -239,7 +239,7 @@ module "vm_tt222222" {
   os_disk = {
     caching              = "ReadWrite"
     storage_account_type = "Standard_LRS"
-    disk_size_gb         = 64
+    disk_size_gb         = 128
   }
 
   network_interfaces = {

@@ -53,6 +53,8 @@ The backend is Azure Storage (OIDC auth). CI/CD uses GitHub Actions.
 - NEVER hardcode secrets — use variables or Key Vault references
 - ALWAYS set `tags = local.common_tags` on every resource
 - Default region is `canadacentral` unless specified
+- **Windows VM os_disk must be at least 128 GB** (Windows Server images require ≥127 GB)
+- **Canada East does NOT support Availability Zones** — set `zones = []` for resources deployed there
 - Use `depends_on` only when implicit dependencies are insufficient
 - All resources must be placed inside the existing resource group module or a new one if the request warrants separation
 - When a ServiceNow RITM is referenced in the issue body, include the RITM number in the PR description
