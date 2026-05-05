@@ -67,8 +67,3 @@ variable "vm_name" {
   default     = "test0001"
 }
 
-variable "vm_tt222222_name" {
-  description = "Name for the Windows VM tt222222 resource (Canada Central, RITM6666996)"
-  type        = string
-  default     = "tt222222"
-}
