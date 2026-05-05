@@ -212,6 +212,53 @@ module "vm_win" {
   depends_on = [module.resource_group, module.vnet_canadaeast]
 }
 
+# --- Windows VM tt333 (AVM) - Canada Central ---
+module "vm_tt333" {
+  source  = "Azure/avm-res-compute-virtualmachine/azurerm"
+  version = "~> 0.18"
+
+  name                = var.vm_tt333_name
+  resource_group_name = module.resource_group.name
+  location            = "canadacentral"
+  os_type             = "Windows"
+  sku_size            = "Standard_D2s_v3"
+  zone                = null
+
+  encryption_at_host_enabled = false
+
+  source_image_reference = {
+    publisher = "MicrosoftWindowsServer"
+    offer     = "WindowsServer"
+    sku       = "2022-datacenter-g2"
+    version   = "latest"
+  }
+
+  admin_username = "azureadmin"
+  admin_password = var.vm_admin_password
+
+  os_disk = {
+    caching              = "ReadWrite"
+    storage_account_type = "Standard_LRS"
+    disk_size_gb         = 128
+  }
+
+  network_interfaces = {
+    primary = {
+      name = "nic-${var.vm_tt333_name}-${var.environment}"
+      ip_configurations = {
+        primary = {
+          name                          = "ipconfig1"
+          private_ip_subnet_resource_id = module.virtual_network.subnets["vm"].resource_id
+        }
+      }
+    }
+  }
+
+  tags = local.common_tags
+
+  depends_on = [module.resource_group, module.virtual_network]
+}
+
 module "application_gateway" {
   source  = "Azure/avm-res-network-applicationgateway/azurerm"
   version = "~> 0.5"
