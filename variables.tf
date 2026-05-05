@@ -67,3 +67,9 @@ variable "vm_name" {
   default     = "test0001"
 }
 
+variable "vm_tt333_name" {
+  description = "Name for the Windows VM tt333 (Canada Central)"
+  type        = string
+  default     = "tt333"
+}
+
