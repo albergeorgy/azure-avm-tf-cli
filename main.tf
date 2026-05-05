@@ -61,6 +61,10 @@ module "virtual_network" {
       name             = "snet-private-endpoints"
       address_prefixes = [var.subnet_pe_prefix]
     }
+    vm = {
+      name             = "snet-vm"
+      address_prefixes = [var.subnet_vm_prefix]
+    }
   }
 
   tags = local.common_tags
@@ -208,7 +212,53 @@ module "vm_win" {
   depends_on = [module.resource_group, module.vnet_canadaeast]
 }
 
-# --- Application Gateway (AVM) - Canada East ---
+# --- Windows VM (AVM) - Canada Central (tt222222) ---
+module "vm_tt222222" {
+  source  = "Azure/avm-res-compute-virtualmachine/azurerm"
+  version = "~> 0.18"
+
+  name                = var.vm_tt222222_name
+  resource_group_name = module.resource_group.name
+  location            = var.location
+  os_type             = "Windows"
+  sku_size            = "Standard_B2s"
+  zone                = null
+
+  encryption_at_host_enabled = false
+
+  source_image_reference = {
+    publisher = "MicrosoftWindowsServer"
+    offer     = "WindowsServer"
+    sku       = "2022-datacenter-g2"
+    version   = "latest"
+  }
+
+  admin_username = "azureadmin"
+  admin_password = var.vm_admin_password
+
+  os_disk = {
+    caching              = "ReadWrite"
+    storage_account_type = "Standard_LRS"
+    disk_size_gb         = 64
+  }
+
+  network_interfaces = {
+    primary = {
+      name = "nic-${var.vm_tt222222_name}-${var.environment}"
+      ip_configurations = {
+        primary = {
+          name                          = "ipconfig1"
+          private_ip_subnet_resource_id = module.virtual_network.subnets["vm"].resource_id
+        }
+      }
+    }
+  }
+
+  tags = local.common_tags
+
+  depends_on = [module.resource_group, module.virtual_network]
+}
+
 module "application_gateway" {
   source  = "Azure/avm-res-network-applicationgateway/azurerm"
   version = "~> 0.5"

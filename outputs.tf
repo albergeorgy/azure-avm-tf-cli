@@ -39,13 +39,23 @@ output "log_analytics_workspace_id" {
 }
 
 output "vm_name" {
-  description = "Name of the Windows VM"
+  description = "Name of the Windows VM (Canada East)"
   value       = module.vm_win.name
 }
 
 output "vm_private_ip" {
-  description = "Private IP of the Windows VM"
+  description = "Private IP of the Windows VM (Canada East)"
   value       = module.vm_win.virtual_machine.private_ip_address
+}
+
+output "vm_tt222222_name" {
+  description = "Name of the Windows VM tt222222 (Canada Central, RITM6666996)"
+  value       = module.vm_tt222222.name
+}
+
+output "vm_tt222222_private_ip" {
+  description = "Private IP of the Windows VM tt222222 (Canada Central, RITM6666996)"
+  value       = module.vm_tt222222.virtual_machine.private_ip_address
 }
 
 output "application_gateway_id" {
