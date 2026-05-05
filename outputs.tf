@@ -48,16 +48,6 @@ output "vm_private_ip" {
   value       = module.vm_win.virtual_machine.private_ip_address
 }
 
-output "vm_tt222222_name" {
-  description = "Name of the Windows VM tt222222 (Canada Central, RITM6666996)"
-  value       = module.vm_tt222222.name
-}
-
-output "vm_tt222222_private_ip" {
-  description = "Private IP of the Windows VM tt222222 (Canada Central, RITM6666996)"
-  value       = module.vm_tt222222.virtual_machine.private_ip_address
-}
-
 output "application_gateway_id" {
   description = "ID of the Application Gateway"
   value       = module.application_gateway.resource_id
