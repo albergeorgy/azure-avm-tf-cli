@@ -49,6 +49,12 @@ variable "subnet_pe_prefix" {
   default     = "10.0.2.0/24"
 }
 
+variable "subnet_vm_prefix" {
+  description = "Address prefix for the VM subnet in the Canada Central virtual network"
+  type        = string
+  default     = "10.0.3.0/24"
+}
+
 variable "vm_admin_password" {
   description = "Admin password for the Windows VM"
   type        = string
@@ -56,7 +62,13 @@ variable "vm_admin_password" {
 }
 
 variable "vm_name" {
-  description = "Name for the Windows VM resource"
+  description = "Name for the Windows VM resource (Canada East)"
   type        = string
   default     = "test0001"
+}
+
+variable "vm_tt222222_name" {
+  description = "Name for the Windows VM tt222222 resource (Canada Central, RITM6666996)"
+  type        = string
+  default     = "tt222222"
 }
